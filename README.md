@@ -216,13 +216,3 @@ class UploadCentralBundleTask extends DefaultTask {
   ```
 - Declare dependencies: none beyond the JDK.
 - Tests can mirror our `HelperLoaderSpec` pattern but focus on ensuring the bundle zips targeted publications and the upload task constructs the correct HTTP request (mock `HttpClient` via Spock).
-
-## Deliverables for Codex
-When you hand this to another Codex instance, include:
-1. This README (for context).
-2. Real Groovy classes implementing `CentralPublisherPlugin`, `CentralBundleTask`, and `UploadCentralBundleTask`.
-3. The extension class with all configurable properties.
-4. A sample `build.gradle` showing how to apply and configure the plugin.
-5. Sample integration tests that confirm the plugin publishes only the `grimoire`/`mavenJava` publication and uploads a bundle with a deployment ID.
-
-With those pieces, the other Codex agent can generate a reusable plugin that matches our current release workflow. Let me know if you’d like me to expand this template into actual source files here before handing it off.	
