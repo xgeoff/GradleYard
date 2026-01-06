@@ -90,6 +90,7 @@ publishing-plugin/
 4. Upload to Sonatype Central:
    - `GRADLE_USER_HOME=.gradle-home ./gradlew uploadCentralBundle`
    - Output will include `Deployment ID: <id>` on success.
+   - Or run everything in one step: `GRADLE_USER_HOME=.gradle-home ./gradlew publishCentralBundle` (runs bundle + upload).
 5. Validate and release in Sonatype UI:
    - Go to https://central.sonatype.com/publisher
    - Open **Deployments** (or **Review**), locate the deployment by the ID from the upload step.

@@ -52,6 +52,11 @@ class CentralPublisherPlugin implements Plugin<Project> {
                 task.uploadUrl.convention(extension.uploadUrl)
                 task.publishingType.convention(extension.publishingType)
             }
+            project.tasks.register('publishCentralBundle') { task ->
+                task.group = 'publishing'
+                task.description = 'Bundles selected publications and uploads them to Sonatype Central in one step.'
+                task.dependsOn('uploadCentralBundle')
+            }
         }
     }
 
