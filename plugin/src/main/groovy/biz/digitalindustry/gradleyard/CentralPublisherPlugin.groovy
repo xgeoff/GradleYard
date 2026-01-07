@@ -1,4 +1,4 @@
-package biz.digitalindustry.publish
+package biz.digitalindustry.gradleyard
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic

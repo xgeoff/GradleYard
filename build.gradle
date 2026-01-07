@@ -1,0 +1,36 @@
+// Root-level helpers to publish the GradleYard plugin using the plugin itself.
+
+def selfPublishInitScript = layout.buildDirectory.file("self-publish-init.gradle")
+
+tasks.register("writeSelfPublishInit") {
+    description = "Writes an init script that applies the locally built GradleYard plugin for self-publishing."
+    dependsOn(":plugin:jar")
+    outputs.file(selfPublishInitScript)
+    doLast {
+        def jarFile = project(":plugin").tasks.named("jar").get().archiveFile.get().asFile
+        def jarPath = jarFile.absolutePath.replace("\\", "\\\\")
+        def script = """
+        initscript {
+            dependencies {
+                classpath files("${jarPath}")
+            }
+        }
+        allprojects {
+            apply plugin: biz.digitalindustry.gradleyard.CentralPublisherPlugin
+        }
+        """.stripIndent()
+        selfPublishInitScript.get().asFile.text = script
+    }
+}
+
+tasks.register("publishSelfWithGradleyard", Exec) {
+    description = "Builds the plugin jar and uses the GradleYard plugin to publish itself to Sonatype."
+    group = "publishing"
+    dependsOn(":plugin:jar", "writeSelfPublishInit")
+    workingDir = file("plugin")
+    commandLine("./gradlew", "--no-daemon", "--init-script", "../build/self-publish-init.gradle", "publishCentralBundle")
+    // Ensure nested Gradle respects the same user home if the caller set GRADLE_USER_HOME
+    if (System.getenv("GRADLE_USER_HOME")) {
+        environment("GRADLE_USER_HOME", System.getenv("GRADLE_USER_HOME"))
+    }
+}

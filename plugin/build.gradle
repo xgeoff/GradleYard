@@ -9,12 +9,16 @@ plugins {
     // Groovy-based Gradle plugin development
     id 'groovy'
     id 'java-gradle-plugin'
+    id 'maven-publish'
 }
 
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
+
+group = 'biz.digitalindustry.gradleyard'
+version = '0.1.0'
 
 dependencies {
     implementation gradleApi()
@@ -30,8 +34,40 @@ gradlePlugin {
     // Define the plugin
     plugins {
         gradleyard {
-            id = 'biz.digitalindustry.publish.gradleyard'
-            implementationClass = 'biz.digitalindustry.publish.CentralPublisherPlugin'
+            id = 'biz.digitalindustry.gradleyard'
+            implementationClass = 'biz.digitalindustry.gradleyard.CentralPublisherPlugin'
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifactId = 'gradleyard'
+            pom {
+                name = 'GradleYard'
+                description = 'Gradle plugin to bundle and upload Maven publications to Sonatype Central.'
+                url = 'https://github.com/xgeoff/gradleyard'
+                licenses {
+                    license {
+                        name = 'Apache License 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/xgeoff/gradleyard'
+                    connection = 'scm:git:https://github.com/xgeoff/gradleyard.git'
+                    developerConnection = 'scm:git:ssh://git@github.com/xgeoff/gradleyard.git'
+                }
+                developers {
+                    developer {
+                        id = 'gradleyard'
+                        name = 'GradleYard Maintainers'
+                        email = 'xgeoff@gmail.com'
+                    }
+                }
+            }
         }
     }
 }

@@ -40,7 +40,7 @@ publishing-plugin/
 ├── settings.gradle
 └── src/
     └── main/groovy/
-        └── biz/digitalindustry/publish/
+        └── biz/digitalindustry/gradleyard/
             ├── CentralPublisherPlugin.groovy
             ├── CentralPublisherExtension.groovy
             └── CentralBundleTask.groovy
@@ -63,7 +63,7 @@ publishing-plugin/
    plugins {
        id 'java'
        id 'maven-publish'
-       id 'biz.digitalindustry.publish.gradleyard'
+       id 'biz.digitalindustry.gradleyard'
    }
 
    group = 'com.example'
@@ -140,7 +140,7 @@ centralPublisher {
   }
   ```
 - **Version:** Set `version = '1.2.3'` in Gradle. This shows as the version in Central. Follow your versioning policy (SemVer recommended).
-- **Plugin id (this plugin):** Always `biz.digitalindustry.publish.gradleyard`. This is only for applying the plugin; it does *not* appear in the uploaded artifacts.
+- **Plugin id (this plugin):** Always `biz.digitalindustry.gradleyard`. This is only for applying the plugin; it does *not* appear in the uploaded artifacts.
 - **Bundle name:** Defaults to `${project.name}-${project.version}`; this is used as the bundle label in the upload request and is visible in the Central “Deployments” view next to the deployment ID.
 - **What Sonatype shows after upload:** Under Deployments/Review you’ll see:
   - Deployment ID (logged by `uploadCentralBundle`)
@@ -152,6 +152,19 @@ centralPublisher {
 - Set `SONATYPE_PUBLISHER_TOKEN_NAME` / `SONATYPE_PUBLISHER_TOKEN_PASSWORD` as secret env vars in your CI.
 - Run with `--no-daemon` in ephemeral runners and set `GRADLE_USER_HOME` to a cacheable path if desired.
 - Artifacts are produced in `build/central-bundle.zip`; stash if you need to inspect before upload.
+
+## Publishing GradleYard Itself (self-host using the plugin)
+The repo includes a helper to publish GradleYard using GradleYard (no external install needed):
+- Build and publish in one shot (uses the plugin JAR you just built):
+  ```
+  GRADLE_USER_HOME=.gradle-home ./gradlew publishSelfWithGradleyard
+  ```
+- What it does:
+  - Builds `plugin/build/libs/plugin.jar`.
+  - Writes an init script that adds that jar to the classpath and applies `biz.digitalindustry.gradleyard` to the `plugin` project.
+  - Runs `publishCentralBundle` in the `plugin` project (bundle + upload).
+- Before running, set your Sonatype token in `~/.gradle/gradle.properties` or env vars as described above.
+- After upload, go to Sonatype Central, find the deployment ID in the UI, inspect, and release.
 
 ## Sample Task Logic (Groovy pseudo-code)
 ```groovy
